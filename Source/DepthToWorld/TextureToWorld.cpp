@@ -35,20 +35,13 @@ FVector UTextureToWorld::ScreenCaptureDeproject(USceneCaptureComponent2D* SceneC
 		int32 y = UV.Y * RenderTarget->GetSizeXY().Y;
 
 		FLinearColor LinearColor = LinearColors[x + y * RenderTarget->GetSizeXY().X];
-	
-		FVector2D Result = FVector2D(1, 1);
-		if (GEngine && GEngine->GameViewport)
-		{
-			GEngine->GameViewport->GetViewportSize( /*out*/Result);
-		}
-
 		FMinimalViewInfo View;
 		SceneCapture->GetCameraView(0.1, View);
 		FMatrix viewMatrix, projectionMatrix, viewProjectionMatrix;
 		UGameplayStatics::GetViewProjectionMatrix(View, viewMatrix, projectionMatrix, viewProjectionMatrix);
 		
 		float Depth = LinearColor.A;
-		FVector World = DeprojectWithDepth(FVector2D(x, y), FIntRect(0, 0, Result.X, Result.Y), viewProjectionMatrix.Inverse(), Depth);
+		FVector World = DeprojectWithDepth(FVector2D(x, y), FIntRect(0, 0, RenderTarget->GetSizeXY().X, RenderTarget->GetSizeXY().Y), viewProjectionMatrix.Inverse(), Depth);
 		return World;
 	}
 	else {
